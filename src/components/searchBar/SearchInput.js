@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import './SearchInput.css'; 
+import { Context } from '../../Context/Context';
 
 export default function SearchInput() {
-  const [searchNote, setSearchNote] = useState('');
+  const { searchNote, setSearchNote } = useContext(Context);
 
   return (
     <div className="search-container">

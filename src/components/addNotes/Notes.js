@@ -1,13 +1,53 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Button from '../../UI/Button';
-import './Notes.css'; 
+import './Notes.css';
+import { Context } from '../../Context/Context';
 
 export default function Notes() {
-    const [notesTitle, setNotesTitle] = useState("");
-    const [notesDescription, setNotesDescription] = useState("");
+    const {
+        isOpenModal, setIsOpenModal,
+        notes, setNotes, notesTitle,
+        setNotesTitle, notesDescription,
+        setNotesDescription,
+        editId, setEditId
+    } = useContext(Context)
+
+    const addNotesHandler = (e) => {
+        e.preventDefault()
+        if (editId) {
+            const updatedNotes = notes.map((note) =>
+                note.id === editId
+                    ? { ...note, title: notesTitle, description: notesDescription }
+                    : note
+            );
+            setNotes(updatedNotes);
+        } else {
+            setNotes((notes) => {
+                return [...notes, {
+                    title: notesTitle,
+                    description: notesDescription,
+                    id: Math.random()
+                }]
+            })
+        }
+
+        setIsOpenModal(!isOpenModal)
+        setNotesTitle("")
+        setNotesDescription("")
+        setEditId(null)
+
+    }
+
+    const closeBtnHandler = () => {
+        setIsOpenModal(!isOpenModal)
+        setNotesTitle("")
+        setNotesDescription("")
+        setEditId(null)
+    }
+
 
     return (
-        <form className="notes-form">
+        <form onSubmit={addNotesHandler} className="notes-form">
             <div className="form-group">
                 <label htmlFor="noteTitle">Note Title</label>
                 <input
@@ -30,8 +70,8 @@ export default function Notes() {
             </div>
 
             <div className="button-group">
-                <Button>Add to Note</Button>
-                <Button>Close</Button>
+                <Button type="submit">{editId !== null ? "Update Note" : "Add to Note"}</Button>
+                <Button onClick={closeBtnHandler}>Close</Button>
             </div>
         </form>
     );
